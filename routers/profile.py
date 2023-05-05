@@ -43,6 +43,17 @@ def get_profile(username: str, database: Session = Depends(get_db)):
     return user_profile
 
 
+
+
+@router.get("/", response_model=ProfileResponse)
+def get_current_profile(user = Depends(get_current_user), database: Session = Depends(get_db)):
+    """Function to get user profile logged in by JWT token"""
+
+    user_profile = database.query(Users).filter(Users.id == user.id).first()
+
+    return user_profile
+
+
 @router.post("/")
 def update_profile(
     body: UserBaseUpdate,

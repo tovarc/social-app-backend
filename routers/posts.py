@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, Depends, Form, UploadFile
 from sqlalchemy.orm import Session
 
 from database.config import get_db
-from database.models import Posts
+from database.models import Posts, Users
 from utils.auth import get_current_user
 
 router = APIRouter(prefix="/posts", tags=["Posts"])
@@ -31,3 +31,13 @@ async def create_post(
         database.refresh(post)
 
         return post
+
+@router.get('/{username}')
+async def get_posts_by_username(username: str, database:Session = Depends(get_db)):
+    '''Function to get all posts in database by username'''
+
+    user = database.query(Users).filter(Users.username == username).first()
+
+    posts = database.query(Posts).filter(Posts.user_id == user.id).all()
+
+    return posts
