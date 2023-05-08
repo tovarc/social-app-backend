@@ -91,4 +91,21 @@ async def get_profile_friends(
 ):
     friends = database.query(Friendship).filter(Friendship.user_id == user.id).all()
 
-    return friends
+    response = []
+
+    for friendship in friends:
+        db_friend = (
+            database.query(Users).filter(Users.id == friendship.friend_id).first()
+        )
+
+        if db_friend:
+            response.append(
+                {
+                    "first_name": db_friend.first_name,
+                    "last_name": db_friend.last_name,
+                    "username": db_friend.username,
+                    "picture": db_friend.picture,
+                }
+            )
+
+    return response
