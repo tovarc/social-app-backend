@@ -26,6 +26,7 @@ async def get_all_users(
 
         response.append(
             {
+                "user_id": db_user.id,
                 "first_name": db_user.first_name,
                 "last_name": db_user.last_name,
                 "username": db_user.username,
