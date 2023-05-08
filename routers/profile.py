@@ -8,6 +8,7 @@ from database.models import Users
 from database.schemas import ProfileResponse, UserBaseUpdate
 from utils.auth import get_current_user
 
+
 router = APIRouter(prefix="/profile", tags=["Profile - Information"])
 
 
@@ -43,17 +44,23 @@ def get_profile(username: str, database: Session = Depends(get_db)):
     return user_profile
 
 
-
-
 @router.get("/", response_model=ProfileResponse)
-def get_current_profile(user = Depends(get_current_user), database: Session = Depends(get_db)):
+def get_current_profile(
+    user=Depends(get_current_user), database: Session = Depends(get_db)
+):
     """Function to get user profile logged in by JWT token"""
+    # test
 
     user_profile = database.query(Users).filter(Users.id == user.id).first()
 
     return user_profile
 
 
+#
+# @router.get('/')
+# async def test_profile():
+#     return "hello world"
+#
 @router.post("/")
 def update_profile(
     body: UserBaseUpdate,
@@ -70,5 +77,3 @@ def update_profile(
     )
 
     database.commit()
-
-    return "Updated"

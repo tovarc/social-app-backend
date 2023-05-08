@@ -38,7 +38,6 @@ def create_access_token(data: any, expires_delta: timedelta | None = None):
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-
 def get_password_hash(password):
     return pwd_context.hash(password)
 

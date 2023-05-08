@@ -1,6 +1,6 @@
 import os
 
-from fastapi import APIRouter, Body, Depends, Form, UploadFile
+from fastapi import APIRouter, Body, Depends, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from database.config import get_db
@@ -32,12 +32,28 @@ async def create_post(
 
         return post
 
-@router.get('/{username}')
-async def get_posts_by_username(username: str, database:Session = Depends(get_db)):
-    '''Function to get all posts in database by username'''
+
+@router.get("/{username}")
+async def get_posts_by_username(username: str, database: Session = Depends(get_db)):
+    """Function to get all posts in database by username"""
 
     user = database.query(Users).filter(Users.username == username).first()
 
+    if user is None:
+        raise HTTPException(status_code=404, detail="User does not exist.")
+
     posts = database.query(Posts).filter(Posts.user_id == user.id).all()
 
-    return posts
+    response = []
+
+    for post in posts:
+        response.append({"post": post, "comments": post.comments})
+
+    return response
+
+
+#
+# @router.get('/')
+# async def get_posts(user= Depends(get_current_user), database=Depends(get_db)):
+#
+#

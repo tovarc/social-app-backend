@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from database.config import Base, engine
-from routers import auth, posts, profile
+from routers import auth, posts, profile, friendships, photos, comments
 
 Base.metadata.create_all(bind=engine)
 
@@ -14,7 +14,9 @@ app.mount("/pictures", StaticFiles(directory="pictures"), name="pictures")
 app.include_router(auth.router)
 app.include_router(profile.router)
 app.include_router(posts.router)
-
+app.include_router(friendships.router)
+app.include_router(photos.router)
+app.include_router(comments.router)
 
 origins = ["*"]
 
