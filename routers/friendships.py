@@ -82,7 +82,26 @@ async def get_friend_requests(user=Depends(get_current_user), database=Depends(g
         database.query(FriendRequest).filter(FriendRequest.receiver_id == user.id).all()
     )
 
-    return requests
+    response = []
+
+    for request in requests:
+        sender = database.query(Users).filter(Users.id == request.sender_id).first()
+
+        response.append(
+            {
+                "id": request.id,
+                "status": request.status,
+                "sender": {
+                    "id": request.sender_id,
+                    "first_name": sender.first_name,
+                    "last_name": sender.last_name,
+                    "username": sender.username,
+                    "picture": sender.picture,
+                },
+            }
+        )
+
+    return response
 
 
 @router.get("/")

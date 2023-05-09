@@ -47,7 +47,27 @@ async def get_posts_by_username(username: str, database: Session = Depends(get_d
     response = []
 
     for post in posts:
-        response.append({"post": post, "comments": post.comments})
+        comments = []
+
+        for comment in post.comments:
+            comment_author = (
+                database.query(Users).filter(Users.id == comment.author_id).first()
+            )
+
+            if comment_author:
+                comments.append(
+                    {
+                        "created_at": comment.created_at,
+                        "post_id": comment.post_id,
+                        "author_id": comment_author.id,
+                        "first_name": comment_author.first_name,
+                        "last_name": comment_author.last_name,
+                        "username": comment_author.username,
+                        "picture": comment_author.picture,
+                    }
+                )
+
+        response.append({"post": post, "comments": comments})
 
     return response
 
